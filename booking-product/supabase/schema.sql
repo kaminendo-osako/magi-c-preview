@@ -108,10 +108,10 @@ create table if not exists public.booking (
   slot_id        uuid not null references public.time_slot(id),
   plan_id        uuid not null references public.plan(id),
   book_date      date not null,
-  people         int  not null default 1 check (people >= 1),
-  customer_name  text not null,
-  customer_email text not null,
-  customer_tel   text not null,
+  people         int  not null default 1 check (people between 1 and 100),
+  customer_name  text not null check (char_length(customer_name)  between 1 and 100),
+  customer_email text not null check (char_length(customer_email) between 3 and 254),
+  customer_tel   text not null check (char_length(customer_tel)   between 1 and 30),
   amount_yen     int  not null default 0,        -- Phase 2-bの決済用。今は記録のみ
   status         text not null default 'confirmed' check (status in ('confirmed','cancelled')),
   note           text,
@@ -281,6 +281,11 @@ begin
   if coalesce(trim(p_name),'') = '' or coalesce(trim(p_email),'') = '' or coalesce(trim(p_tel),'') = '' then
     raise exception 'missing_customer_info';
   end if;
+  if char_length(trim(p_name))  > 100
+     or char_length(trim(p_email)) > 254
+     or char_length(trim(p_tel))   > 30 then
+    raise exception 'input_too_long';
+  end if;
   if p_email !~ '^[^@\s]+@[^@\s]+\.[^@\s]+$' then
     raise exception 'invalid_email';
   end if;
@@ -318,7 +323,7 @@ begin
     tenant_id, space_id, slot_id, plan_id, book_date, people,
     customer_name, customer_email, customer_tel, amount_yen, status
   ) values (
-    v_tenant, p_space_id, v_slot, v_plan.id, p_date, greatest(coalesce(p_people,1),1),
+    v_tenant, p_space_id, v_slot, v_plan.id, p_date, least(greatest(coalesce(p_people,1),1),100),
     trim(p_name), lower(trim(p_email)), trim(p_tel), v_plan.price_yen, 'confirmed'
   )
   returning id into v_id;

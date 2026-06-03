@@ -292,9 +292,9 @@
             p_plan_code: state.planId,
             p_date: state.date,
             p_people: parseInt(state.people, 10) || 1,
-            p_name: state.name,
-            p_email: state.email,
-            p_tel: state.tel,
+            p_name: state.name.trim(),
+            p_email: state.email.trim(),
+            p_tel: state.tel.trim(),
           });
           const id = Array.isArray(res) ? res[0] : res;
           const shortId = String(id).replace(/-/g, '').slice(0, 8).toUpperCase();
