@@ -204,14 +204,13 @@ h1, h2, h3 {
 .hero__media {
   position: absolute; inset: 0;
   background:
-    linear-gradient(180deg, rgba(20,18,14,.45), rgba(20,18,14,.55)),
+    /* 文字の可読性を確保する暗幕（左を濃く／写真の上に重ねる） */
+    linear-gradient(100deg, rgba(20,18,14,.66) 0%, rgba(20,18,14,.42) 48%, rgba(20,18,14,.34) 100%),
+    linear-gradient(180deg, rgba(20,18,14,.22), rgba(20,18,14,.52)),
+    /* 仮画像：トップHero（最終的に実写真へ差し替え予定） */
+    url("../images/placeholders/home-hero.jpg") center / cover no-repeat,
+    /* 画像が読み込めない場合のフォールバック色 */
     radial-gradient(120% 120% at 70% 20%, #6f7a5f 0%, #4a5240 45%, #2b2c23 100%);
-}
-.hero__media::after {
-  /* placeholder note for photography */
-  content: "［ ヒーロー写真：自然光の差し込む店内 ］";
-  position: absolute; right: 18px; bottom: 14px;
-  font-size: .72rem; letter-spacing: .1em; color: rgba(255,255,255,.45);
 }
 .hero__inner { position: relative; z-index: 2; }
 .hero__eyebrow {
@@ -271,6 +270,7 @@ h1, h2, h3 {
     linear-gradient(160deg, rgba(255,255,255,.18), rgba(0,0,0,.04)),
     radial-gradient(110% 110% at 30% 20%, #aeb59c, #7c8a6e 60%, #5e6b52);
   position: relative;
+  overflow: hidden;
   box-shadow: 0 30px 60px -30px rgba(40,38,30,.4);
 }
 .media-frame[data-label]::after {
@@ -278,6 +278,15 @@ h1, h2, h3 {
   position: absolute; inset: auto 0 12px 0; text-align: center;
   font-size: .72rem; letter-spacing: .1em; color: rgba(255,255,255,.7);
 }
+/* 写真を入れる枠：画像が比率を支配し、はみ出しは cover でトリミング */
+.media-frame img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+/* 横位置の写真用に横長比率（縦4/5だと横写真が大きく切れるため） */
+.media-frame--photo { aspect-ratio: 4 / 3; }
 .media-frame--wide { aspect-ratio: 16 / 10; }
 
 /* ---------- Feature grid (設備) ---------- */
