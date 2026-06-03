@@ -1,0 +1,11 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs / temp
+*.log
+*.tmp
+
+# Local Claude config (keep launch.json tracked, ignore local settings)
+.claude/settings.local.json

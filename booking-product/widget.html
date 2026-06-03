@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Booking Widget — プレビュー</title>
+  <meta name="description" content="埋め込み型予約ウィジェット（製品プロトタイプ）。サイト非依存で動作し、決済プロバイダを差し替え可能。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Shippori+Mincho:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/widget.css" />
+  <style>
+    /* このページ自体の最小スタイル（ウィジェット本体は .mgcb 配下で自己完結） */
+    body { margin:0; min-height:100vh; background:#efeae0; display:grid; place-items:center; padding:32px 16px; font-family:"Zen Kaku Gothic New",sans-serif; }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       埋め込み単位はこの .mgcb 1要素のみ。
+       ホストページのどこに置いても自己完結で動作する。
+       ============================================================ -->
+  <div class="mgcb">
+
+    <!-- Header & progress -->
+    <div class="mgcb__head">
+      <div class="mgcb__brand">MAGI-C</div>
+      <h2 class="mgcb__title">レンタルスペース予約</h2>
+      <ul class="mgcb__steps">
+        <li></li><li></li><li></li><li></li>
+      </ul>
+      <p class="mgcb__stepnote" data-stepnote>—</p>
+    </div>
+
+    <!-- ───────── Step 1：日時とプラン ───────── -->
+    <section class="mgcb__panel is-current">
+      <p class="mgcb__label">ご利用日を選ぶ</p>
+      <div class="mgcb-cal">
+        <div class="mgcb-cal__head">
+          <span class="mgcb-cal__title" data-cal-title>—</span>
+          <span class="mgcb-cal__nav">
+            <button type="button" data-cal-prev aria-label="前の月">‹</button>
+            <button type="button" data-cal-next aria-label="次の月">›</button>
+          </span>
+        </div>
+        <div class="mgcb-cal__grid" data-cal-dow></div>
+        <div class="mgcb-cal__grid" data-cal-body></div>
+      </div>
+
+      <p class="mgcb__label">時間枠を選ぶ</p>
+      <div class="mgcb-opts cols" data-slots></div>
+
+      <p class="mgcb__label">プランを選ぶ</p>
+      <div class="mgcb-opts" data-plans></div>
+    </section>
+
+    <!-- ───────── Step 2：お客様情報 ───────── -->
+    <section class="mgcb__panel">
+      <p class="mgcb__label">お客様情報をご入力ください</p>
+      <div class="mgcb-field">
+        <label>お名前<span class="req">必須</span></label>
+        <input type="text" name="name" placeholder="山田 花子" autocomplete="name" />
+      </div>
+      <div class="mgcb-field">
+        <label>メールアドレス<span class="req">必須</span></label>
+        <input type="email" name="email" placeholder="you@example.com" autocomplete="email" inputmode="email" />
+      </div>
+      <div class="mgcb-field">
+        <label>電話番号<span class="req">必須</span></label>
+        <input type="tel" name="tel" placeholder="090-0000-0000" autocomplete="tel" inputmode="tel" />
+      </div>
+      <div class="mgcb-field">
+        <label>ご利用人数</label>
+        <select name="people">
+          <option value="1">1名</option>
+          <option value="2">2名</option>
+          <option value="3">3名</option>
+          <option value="4">4名</option>
+          <option value="5">5名</option>
+          <option value="6">6名</option>
+          <option value="8">8名</option>
+          <option value="10">10名以上</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- ───────── Step 3：確認とお支払い方法 ───────── -->
+    <section class="mgcb__panel">
+      <p class="mgcb__label">ご予約内容の確認</p>
+      <div class="mgcb-summary">
+        <dl>
+          <dt>ご利用日</dt><dd data-sum-date>—</dd>
+          <dt>時間枠</dt><dd data-sum-slot>—</dd>
+          <dt>プラン</dt><dd data-sum-plan>—</dd>
+          <dt>人数</dt><dd data-sum-people>—</dd>
+        </dl>
+        <div class="total">
+          <dt>お支払い金額</dt>
+          <dd data-sum-total>—</dd>
+        </div>
+      </div>
+
+      <p class="mgcb__label">お支払い方法を選ぶ</p>
+      <div class="mgcb-opts" data-payments></div>
+
+      <p class="mgcb-secure">🔒 決済は各プロバイダの安全な画面で行われます（カード情報は当サイトを通りません）</p>
+    </section>
+
+    <!-- ───────── Step 4：完了 ───────── -->
+    <section class="mgcb__panel">
+      <div class="mgcb-done">
+        <div class="mgcb-done__check">✓</div>
+        <h3>ご予約を受け付けました</h3>
+        <p class="mgcb-note" data-done-msg>—</p>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <div class="mgcb__actions">
+      <button type="button" class="mgcb-btn mgcb-btn--ghost" data-back>戻る</button>
+      <button type="button" class="mgcb-btn" data-next>次へ</button>
+    </div>
+
+  </div>
+
+  <script src="assets/supabase-config.js"></script>
+  <script src="assets/widget.js"></script>
+</body>
+</html>

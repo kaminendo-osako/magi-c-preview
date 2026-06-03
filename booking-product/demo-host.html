@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>デモ：既存サイトへの埋め込み例｜Booking Widget</title>
+  <meta name="description" content="すでにWebサイトをお持ちの店舗に、予約＋決済ウィジェットを1行で埋め込むデモ。" />
+  <!-- ↓ホスト側はあえて別フォント・別配色。ウィジェットが影響を受けないことを示す -->
+  <style>
+    :root { --host-blue:#1f3a5f; --host-bg:#ffffff; --host-gray:#6b7280; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:"Helvetica Neue",Arial,"Hiragino Kaku Gothic ProN",sans-serif; color:#111; background:var(--host-bg); line-height:1.7; }
+    .host-header { background:var(--host-blue); color:#fff; padding:18px 24px; display:flex; align-items:center; justify-content:space-between; }
+    .host-header strong { font-size:1.15rem; letter-spacing:.04em; }
+    .host-header nav a { color:#cdd8e6; text-decoration:none; margin-left:20px; font-size:.9rem; }
+    .host-hero { background:linear-gradient(180deg,#eaf0f7,#fff); padding:56px 24px; text-align:center; }
+    .host-hero h1 { font-size:1.9rem; margin:0 0 10px; color:var(--host-blue); }
+    .host-hero p { color:var(--host-gray); margin:0; }
+    .host-wrap { max-width:980px; margin:0 auto; padding:40px 24px 64px; }
+    .host-note { background:#f4f6f9; border:1px solid #e1e6ee; border-radius:8px; padding:16px 18px; margin-bottom:28px; font-size:.9rem; color:#374151; }
+    .host-note code { background:#1f2937; color:#e5e7eb; padding:2px 8px; border-radius:5px; font-size:.82em; }
+    .embed-frame { width:100%; max-width:600px; margin:0 auto; display:block; border:0; }
+    .host-footer { background:#111827; color:#9ca3af; text-align:center; padding:22px; font-size:.82rem; }
+  </style>
+</head>
+<body>
+
+  <!-- ====== ここから下は「お客様が既に持っている別サイト」のイメージ ====== -->
+  <header class="host-header">
+    <strong>○○スタジオ（既存サイトの例）</strong>
+    <nav>
+      <a href="#">トップ</a>
+      <a href="#">料金</a>
+      <a href="#">予約</a>
+      <a href="#">お問い合わせ</a>
+    </nav>
+  </header>
+
+  <section class="host-hero">
+    <h1>ご予約はこちらから</h1>
+    <p>下の予約フォームから、空き状況の確認・お支払いまで完結します。</p>
+  </section>
+
+  <main class="host-wrap">
+    <div class="host-note">
+      <strong>これはデモです。</strong> 上下のヘッダー／フッターは「お客様の既存サイト」。
+      その中に、予約＋決済ウィジェットを <code>&lt;iframe src="widget.html"&gt;</code> 1行で埋め込んでいます。
+      ホスト側は別フォント・別配色ですが、ウィジェットのデザインは崩れません（スタイルが互いに干渉しない）。
+    </div>
+
+    <!-- ★ 実際の埋め込みコードはこの iframe 1行だけ -->
+    <iframe class="embed-frame" src="widget.html" title="予約ウィジェット" height="900" loading="lazy"></iframe>
+  </main>
+
+  <footer class="host-footer">
+    &copy; 2026 ○○スタジオ（デモ用の架空サイト）
+  </footer>
+
+</body>
+</html>

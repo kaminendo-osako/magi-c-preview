@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>レンタルスペース予約｜MAGI-C 南柏</title>
+  <meta name="description" content="MAGI-C（南柏）レンタルスペースのご予約。空き状況を確認し、事前オンライン決済までその場で完結できます。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Shippori+Mincho:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header" id="header">
+    <a href="index.html" class="brand">MAGI<span>·</span>C</a>
+    <button class="nav-toggle" id="navToggle" aria-label="メニューを開く" aria-expanded="false"><span></span></button>
+    <nav class="nav" id="nav">
+      <a href="index.html">ホーム</a>
+      <a href="facilities.html">設備一覧</a>
+      <a href="rental.html" aria-current="page">レンタル予約</a>
+      <a href="cafe.html">カフェ予約</a>
+      <a href="access.html">アクセス</a>
+      <a href="contact.html">お問い合わせ</a>
+      <a href="rental.html" class="btn btn--sage">ご予約</a>
+    </nav>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Rental Space</span>
+      <h1>レンタルスペース予約</h1>
+      <p class="lead" style="margin-inline:auto;">空き状況をご確認のうえ、ご予約・お支払いまでオンラインで完結いただけます。</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <ol class="steps reveal" style="margin-bottom:48px;">
+        <li><strong>日時を選ぶ</strong><p>カレンダーから空いている日時を選択します。</p></li>
+        <li><strong>プラン・オプションを選ぶ</strong><p>利用時間や必要な機材・キッチンなどを指定します。</p></li>
+        <li><strong>情報入力・事前決済</strong><p>お客様情報を入力し、オンラインで事前にお支払い（クレジットカード）。</p></li>
+        <li><strong>予約確定</strong><p>確認メールが届いて完了。当日はそのままご来店ください。</p></li>
+      </ol>
+
+      <div class="notice reveal" style="margin-bottom:40px;">
+        <strong>お支払いについて：</strong> レンタルスペースは<strong>事前オンライン決済</strong>制です（クレジットカード）。キャンセルポリシーは予約フォーム内に記載します。
+      </div>
+
+      <!-- 予約システム埋め込み枠（本番では Amelia のショートコードに置き換え） -->
+      <div class="media-frame--wide reveal" style="display:grid; place-items:center; text-align:center; border:1px dashed var(--c-line); background:var(--c-paper); border-radius:var(--radius); padding:48px;">
+        <div>
+          <span class="eyebrow">Booking System</span>
+          <h3 style="margin-bottom:10px;">予約カレンダー表示エリア</h3>
+          <p class="lead" style="margin-inline:auto;">本番では Amelia の予約フォーム（事前決済つき）をこの位置に埋め込みます。<br>LINEのLIFFエンドポイントもこのページURLを指定します。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="index.html" class="brand">MAGI<span>·</span>C</a>
+          <p style="font-size:.9rem; max-width:34ch;">南柏のレンタルスペース兼・完全予約制カフェ。上質な時間と、人がつながる場所を。</p>
+        </div>
+        <div><h4>Menu</h4><ul>
+          <li><a href="facilities.html">設備一覧</a></li>
+          <li><a href="rental.html">レンタル予約</a></li>
+          <li><a href="cafe.html">カフェ予約</a></li>
+          <li><a href="access.html">アクセス</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+        </ul></div>
+        <div><h4>Contact</h4><ul>
+          <li><a href="contact.html">お問い合わせフォーム</a></li>
+          <li><a href="#">公式LINE</a></li>
+          <li><a href="#">Instagram</a></li>
+        </ul></div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 MAGI-C. All rights reserved.</span>
+        <span>千葉県柏市（南柏）</span>
+      </div>
+    </div>
+  </footer>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

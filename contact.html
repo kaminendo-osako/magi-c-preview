@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>お問い合わせ｜MAGI-C 南柏</title>
+  <meta name="description" content="MAGI-C（南柏）へのお問い合わせ。フォームまたは公式LINEよりお気軽にご連絡ください。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Shippori+Mincho:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header" id="header">
+    <a href="index.html" class="brand">MAGI<span>·</span>C</a>
+    <button class="nav-toggle" id="navToggle" aria-label="メニューを開く" aria-expanded="false"><span></span></button>
+    <nav class="nav" id="nav">
+      <a href="index.html">ホーム</a>
+      <a href="facilities.html">設備一覧</a>
+      <a href="rental.html">レンタル予約</a>
+      <a href="cafe.html">カフェ予約</a>
+      <a href="access.html">アクセス</a>
+      <a href="contact.html" aria-current="page">お問い合わせ</a>
+      <a href="rental.html" class="btn btn--sage">ご予約</a>
+    </nav>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Contact</span>
+      <h1>お問い合わせ</h1>
+      <p class="lead" style="margin-inline:auto;">ご予約に関するご質問や貸切・取材のご相談など、お気軽にご連絡ください。</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split" style="align-items:start;">
+      <div class="reveal">
+        <h2 class="section-title" style="font-size:1.5rem;">フォームから送る</h2>
+        <!-- 本番では Contact Form 7 / WPForms 等に置き換え -->
+        <form class="form" onsubmit="return false;">
+          <div class="field"><label>お名前<span class="req">必須</span></label><input type="text" name="name" placeholder="山田 太郎" required /></div>
+          <div class="field"><label>メールアドレス<span class="req">必須</span></label><input type="email" name="email" placeholder="example@mail.com" required /></div>
+          <div class="field"><label>電話番号</label><input type="tel" name="tel" placeholder="090-0000-0000" /></div>
+          <div class="field"><label>お問い合わせ種別</label>
+            <select name="type">
+              <option>レンタルスペースについて</option>
+              <option>カフェについて</option>
+              <option>貸切・イベントのご相談</option>
+              <option>取材・掲載について</option>
+              <option>その他</option>
+            </select>
+          </div>
+          <div class="field"><label>お問い合わせ内容<span class="req">必須</span></label><textarea name="message" rows="6" placeholder="ご用件をご記入ください" required></textarea></div>
+          <div><button type="submit" class="btn btn--lg">送信する</button></div>
+          <p style="font-size:.8rem; color:var(--c-ink-soft);">※ プロトタイプのため未送信です。本番では送信機能を接続します。</p>
+        </form>
+      </div>
+
+      <div class="reveal">
+        <h2 class="section-title" style="font-size:1.5rem;">LINE で相談する</h2>
+        <p class="lead" style="margin-bottom:24px;">公式LINEからもお問い合わせ・ご予約いただけます。友だち追加でスムーズにやり取りできます。</p>
+        <a href="#" class="line-pill" style="margin-bottom:32px;">LINEで友だち追加</a>
+
+        <dl class="info-list" style="margin-top:32px;">
+          <div><dt>営業時間</dt><dd>◯:◯◯〜◯◯:◯◯（完全予約制）</dd></div>
+          <div><dt>定休日</dt><dd>◯曜日</dd></div>
+          <div><dt>所在地</dt><dd>千葉県柏市（南柏）</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="index.html" class="brand">MAGI<span>·</span>C</a>
+          <p style="font-size:.9rem; max-width:34ch;">南柏のレンタルスペース兼・完全予約制カフェ。上質な時間と、人がつながる場所を。</p>
+        </div>
+        <div><h4>Menu</h4><ul>
+          <li><a href="facilities.html">設備一覧</a></li>
+          <li><a href="rental.html">レンタル予約</a></li>
+          <li><a href="cafe.html">カフェ予約</a></li>
+          <li><a href="access.html">アクセス</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+        </ul></div>
+        <div><h4>Contact</h4><ul>
+          <li><a href="contact.html">お問い合わせフォーム</a></li>
+          <li><a href="#">公式LINE</a></li>
+          <li><a href="#">Instagram</a></li>
+        </ul></div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 MAGI-C. All rights reserved.</span>
+        <span>千葉県柏市（南柏）</span>
+      </div>
+    </div>
+  </footer>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

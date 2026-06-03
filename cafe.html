@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>カフェ予約｜MAGI-C 南柏（完全予約制）</title>
+  <meta name="description" content="MAGI-C（南柏）完全予約制カフェのご予約。営業カレンダーで空いている日をご確認のうえ、公式LINEからご予約ください。お支払いは当日店頭にて。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Shippori+Mincho:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header" id="header">
+    <a href="index.html" class="brand">MAGI<span>·</span>C</a>
+    <button class="nav-toggle" id="navToggle" aria-label="メニューを開く" aria-expanded="false"><span></span></button>
+    <nav class="nav" id="nav">
+      <a href="index.html">ホーム</a>
+      <a href="facilities.html">設備一覧</a>
+      <a href="rental.html">レンタル予約</a>
+      <a href="cafe.html" aria-current="page">カフェ予約</a>
+      <a href="access.html">アクセス</a>
+      <a href="contact.html">お問い合わせ</a>
+      <a href="rental.html" class="btn btn--sage">ご予約</a>
+    </nav>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Reservation Café</span>
+      <h1>カフェ予約</h1>
+      <p class="lead">完全予約制のカフェです。営業日をご確認のうえ、公式LINEからお気軽にご予約ください。</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split" style="align-items:start;">
+      <!-- 左：説明とステップ -->
+      <div class="reveal">
+        <span class="eyebrow">How to book</span>
+        <h2 class="section-title" style="font-size:1.5rem;">ご予約の流れ</h2>
+        <p class="lead" style="margin-bottom:26px;">カフェは席のご予約制です（貸切ではありません）。レンタルスペースの貸切がある日や定休日はご利用いただけません。カレンダーで「営業」の日をご確認のうえ、公式LINEからご希望をお送りください。</p>
+        <ol class="steps">
+          <li><strong>営業日を確認する</strong><p>右の営業カレンダーで、ご希望日が「営業」かをご確認ください。</p></li>
+          <li><strong>公式LINEを友だち追加</strong><p>下のボタンから友だち追加します。</p></li>
+          <li><strong>希望を送って予約確定</strong><p>ご希望の日時・人数をトークで送り、予約を確定します。</p></li>
+          <li><strong>当日ご来店・店頭でお支払い</strong><p>お支払いは当日店頭にて承ります（オンライン決済はありません）。</p></li>
+        </ol>
+        <div class="notice" style="margin-top:26px;">
+          <strong>ご予約・お支払いについて：</strong> カフェは<strong>完全予約制</strong>です。お支払いは<strong>当日店頭（現地決済）</strong>。<strong>貸切日・定休日</strong>はご予約いただけません。
+        </div>
+        <a href="#" class="line-pill" style="margin-top:26px;">LINEで予約・友だち追加</a>
+      </div>
+
+      <!-- 右：営業カレンダー -->
+      <div class="reveal">
+        <div class="cal" id="cafeCalendar" aria-label="営業カレンダー">
+          <div class="cal__head">
+            <span class="cal__title" data-cal-title>—</span>
+            <span class="cal__nav">
+              <button type="button" data-cal-prev aria-label="前の月">‹</button>
+              <button type="button" data-cal-next aria-label="次の月">›</button>
+            </span>
+          </div>
+          <div class="cal__grid" data-cal-dow></div>
+          <div class="cal__grid" data-cal-body></div>
+          <div class="cal__legend">
+            <span><i class="i-open"></i>営業（予約受付）</span>
+            <span><i class="i-full"></i>貸切（ご予約不可）</span>
+            <span><i class="i-closed"></i>定休日</span>
+          </div>
+        </div>
+        <p style="font-size:.82rem; color:var(--c-ink-soft); margin-top:14px;">※ カレンダーの営業状況はデモ用の仮データです。本番では実際の予約・貸切状況と連動させます。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="index.html" class="brand">MAGI<span>·</span>C</a>
+          <p style="font-size:.9rem; max-width:34ch;">南柏のレンタルスペース兼・完全予約制カフェ。上質な時間と、人がつながる場所を。</p>
+        </div>
+        <div><h4>Menu</h4><ul>
+          <li><a href="facilities.html">設備一覧</a></li>
+          <li><a href="rental.html">レンタル予約</a></li>
+          <li><a href="cafe.html">カフェ予約</a></li>
+          <li><a href="access.html">アクセス</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+        </ul></div>
+        <div><h4>Contact</h4><ul>
+          <li><a href="contact.html">お問い合わせフォーム</a></li>
+          <li><a href="#">公式LINE</a></li>
+          <li><a href="#">Instagram</a></li>
+        </ul></div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 MAGI-C. All rights reserved.</span>
+        <span>千葉県柏市（南柏）</span>
+      </div>
+    </div>
+  </footer>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
