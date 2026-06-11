@@ -7,5 +7,9 @@ desktop.ini
 *.log
 *.tmp
 
-# Local Claude config (keep launch.json tracked, ignore local settings)
-.claude/settings.local.json
+# Local Claude config（公開プレビューには作業ファイルを含めない）
+.claude/
+
+# 元素材・作業用フォルダ（公開リポジトリに含めない・念のため）
+素材/
+材料/

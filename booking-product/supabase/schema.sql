@@ -208,8 +208,8 @@ begin
         select 1 from closed_weekday cw
         where cw.space_id = p_space_id and cw.weekday = extract(dow from days.d)::int
       ) then 'closed'
-      when exists (select 1 from fullday f where f.book_date = days.d and f.any_closed) then 'closed'
-      when exists (select 1 from fullday f where f.book_date = days.d) then 'full'
+      when exists (select 1 from fullday f where f.block_date = days.d and f.any_closed) then 'closed'
+      when exists (select 1 from fullday f where f.block_date = days.d) then 'full'
       when v_slot_count > 0
         and coalesce((select used_slots from used u where u.book_date = days.d), 0) >= v_slot_count
         then 'full'
