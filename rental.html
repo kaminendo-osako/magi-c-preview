@@ -11,8 +11,8 @@
   <meta property="og:description" content="自然光のはいる多目的スペース。空き状況の確認から事前オンライン決済まで、その場で完結。" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="MAGI-C" />
-  <!-- 仮画像OGP：公開ドメイン確定後、content を絶対URL（https://<ドメイン>/assets/images/placeholders/ogp.jpg）へ差し替え -->
-  <meta property="og:image" content="assets/images/placeholders/ogp.jpg" />
+  <!-- 仮画像OGP：現在は確認用プレビュー（GitHub Pages）の絶対URL。本番ドメイン確定後に差し替え -->
+  <meta property="og:image" content="https://kaminendo-osako.github.io/magi-c-preview/assets/images/placeholders/ogp.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -74,14 +74,12 @@
         <strong>お支払いについて：</strong> レンタルスペースは<strong>事前オンライン決済</strong>制です（クレジットカード）。キャンセルポリシーは予約フォーム内に記載します。
       </div>
 
-      <!-- 予約システム埋め込み枠（本番では Amelia のショートコードに置き換え） -->
-      <div class="media-frame--wide reveal" style="display:grid; place-items:center; text-align:center; border:1px dashed var(--c-line); background:var(--c-paper); border-radius:var(--radius); padding:48px;">
-        <div>
-          <span class="eyebrow">Booking System</span>
-          <h3 style="margin-bottom:10px;">予約カレンダー表示エリア</h3>
-          <p class="lead" style="margin-inline:auto;">本番では Amelia の予約フォーム（事前決済つき）をこの位置に埋め込みます。<br>LINEのLIFFエンドポイントもこのページURLを指定します。</p>
-        </div>
+      <!-- 予約ウィジェット（自社開発・Supabase接続済み）。LINEのLIFFエンドポイントもこのページURLを指定する -->
+      <!-- 確認用プレビュー期間中の注意書き。本番公開時にこの .notice は削除する -->
+      <div class="notice reveal" style="margin-bottom:28px;">
+        <strong>確認用テスト環境について：</strong> 下の予約フォームは動作確認用です。ご入力内容は検証用データとして保存されますが、<strong>本番のご予約としては扱われません</strong>。決済は未接続のため、<strong>実際のお支払いは発生しません</strong>（お支払い機能は次の段階で接続します）。
       </div>
+      <iframe class="booking-embed reveal" src="booking-product/widget.html" title="レンタルスペース予約フォーム" height="1220" loading="lazy"></iframe>
     </div>
   </section>
 

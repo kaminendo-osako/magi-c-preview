@@ -429,6 +429,9 @@ h1, h2, h3 {
 .sister .lead { color: rgba(247,244,236,.78); }
 .sister .media-frame { box-shadow:none; }
 
+/* ---------- 予約ウィジェット埋め込み（rental） ---------- */
+.booking-embed { width:100%; max-width:600px; margin-inline:auto; display:block; border:0; }
+
 /* ---------- Access ---------- */
 .map-embed {
   width:100%; aspect-ratio: 16/9; border:0; border-radius: var(--radius);
