@@ -1,0 +1,13 @@
+# Supabase CLI 設定（このディレクトリを --workdir に指定して使う）
+#   例: cd booking-product/supabase && supabase functions deploy create-checkout-session
+# project_id は Supabase プロジェクトの Reference ID（Settings → General）。
+project_id = "yudabqfivpgfiqxozccu"
+
+# Edge Functions
+#   verify_jwt=false: この2関数は Supabase の JWT ではなく
+#   「サーバー側での入力再検証」「Stripe署名検証」で安全性を担保するため無効化。
+[functions.create-checkout-session]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false

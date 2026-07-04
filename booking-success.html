@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- 制作途中の確認用プレビュー：検索エンジンに登録させない（公開本番時に削除） -->
+  <meta name="robots" content="noindex,nofollow" />
+  <title>ご予約ありがとうございます｜MAGI-C 南柏</title>
+  <meta name="description" content="MAGI-C レンタルスペースのご予約が完了しました。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Shippori+Mincho:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header is-scrolled" id="header">
+    <a href="index.html" class="brand">MAGI<span>·</span>C</a>
+  </header>
+
+  <section class="section" style="padding-top:calc(96px + 6vw); text-align:center;">
+    <div class="container" style="max-width:640px;">
+      <span class="eyebrow">Reservation</span>
+
+      <div id="result" data-state="loading">
+        <!-- loading -->
+        <div class="state state--loading">
+          <h1 class="section-title">お支払いを確認しています…</h1>
+          <p class="lead" style="margin-inline:auto;">少しお待ちください。この画面は自動で更新されます。</p>
+        </div>
+        <!-- success -->
+        <div class="state state--success" hidden>
+          <div class="success-check" aria-hidden="true">✓</div>
+          <h1 class="section-title">ご予約が確定しました</h1>
+          <p class="lead" style="margin-inline:auto;">ご予約ありがとうございます。確認のご連絡を差し上げます。</p>
+          <p class="booking-code">予約番号：<strong data-code>—</strong></p>
+        </div>
+        <!-- pending -->
+        <div class="state state--pending" hidden>
+          <h1 class="section-title">お支払いを受け付けました</h1>
+          <p class="lead" style="margin-inline:auto;">確定処理を進めています。反映まで少し時間がかかる場合があります。数分後にこの画面を再読み込みするか、お問い合わせください。</p>
+          <p class="booking-code">予約番号：<strong data-code>—</strong></p>
+        </div>
+        <!-- error -->
+        <div class="state state--error" hidden>
+          <h1 class="section-title">ご予約を確認できませんでした</h1>
+          <p class="lead" style="margin-inline:auto;">お手数ですが、もう一度お試しいただくか、お問い合わせください。お支払いが完了している場合は、二重にご請求されることはありません。</p>
+        </div>
+      </div>
+
+      <!-- テスト環境の注意書き（本番公開時に削除） -->
+      <div class="notice" style="margin:32px auto 0; max-width:560px; text-align:left;">
+        <strong>確認用テスト環境について：</strong> これは動作確認用の表示です。テストモードのため<strong>実際の請求は発生していません</strong>。本番のご予約・お支払いとしては扱われません。
+      </div>
+
+      <div style="margin-top:36px;">
+        <a href="rental.html" class="btn btn--ghost">レンタル予約へ戻る</a>
+        <a href="index.html" class="btn btn--sage" style="margin-left:10px;">ホームへ</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:0; padding-top:0;">
+        <span>&copy; 2026 MAGI-C. All rights reserved.</span>
+        <span>千葉県柏市（南柏）</span>
+      </div>
+    </div>
+  </footer>
+
+  <style>
+    .success-check{ width:64px; height:64px; border-radius:50%; background:rgba(124,138,110,.16); color:var(--c-sage-deep); display:grid; place-items:center; margin:0 auto 20px; font-size:1.9rem; }
+    .booking-code{ margin-top:18px; font-size:1.05rem; letter-spacing:.04em; color:var(--c-ink); }
+    .booking-code strong{ font-family:var(--f-latin); font-size:1.35rem; letter-spacing:.12em; color:var(--c-brass); }
+  </style>
+
+  <!-- 接続情報（URL + Publishable key のみ・公開可） -->
+  <script src="booking-product/assets/supabase-config.js"></script>
+  <script>
+    (async () => {
+      const box = document.getElementById('result');
+      const show = (name) => {
+        box.querySelectorAll('.state').forEach((el) => { el.hidden = !el.classList.contains('state--' + name); });
+      };
+      const setCode = (code) => box.querySelectorAll('[data-code]').forEach((el) => el.textContent = code || '—');
+
+      const cfg = window.MGCB_CONFIG || {};
+      const sessionId = new URLSearchParams(location.search).get('session_id');
+      if (!cfg.supabaseUrl || !cfg.supabaseAnonKey || !sessionId) { show('error'); return; }
+
+      const base = cfg.supabaseUrl.replace(/\/+$/, '');
+      const headers = { apikey: cfg.supabaseAnonKey, Authorization: 'Bearer ' + cfg.supabaseAnonKey, 'Content-Type': 'application/json' };
+
+      const check = async () => {
+        const r = await fetch(`${base}/rest/v1/rpc/booking_public_status`, {
+          method: 'POST', headers, body: JSON.stringify({ p_session_id: sessionId }),
+        });
+        if (!r.ok) return null;
+        const rows = await r.json();
+        return Array.isArray(rows) && rows.length ? rows[0] : null;
+      };
+
+      // webhook 反映待ちのため数回ポーリング
+      for (let i = 0; i < 6; i++) {
+        let row = null;
+        try { row = await check(); } catch (_) {}
+        if (row) {
+          setCode(row.booking_code);
+          if (row.status === 'confirmed') { show('success'); return; }
+          if (row.status === 'cancelled' || row.status === 'expired') { show('error'); return; }
+        }
+        await new Promise((res) => setTimeout(res, 2500));
+      }
+      // 反映が間に合わない場合は pending 表示（決済自体は成功している想定）
+      show('pending');
+    })();
+  </script>
+</body>
+</html>

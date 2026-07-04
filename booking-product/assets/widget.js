@@ -15,6 +15,8 @@
   const RT = window.MGCB_CONFIG || {};
   let live = !!(RT.supabaseUrl && RT.supabaseAnonKey); // 資格情報があればライブ
   const spaceSlug = RT.spaceSlug || 'rental';
+  const stripeOn = !!RT.enableStripe;                  // ライブ×ONで Stripe Checkout に接続
+  const FN = (RT.supabaseUrl || '').replace(/\/+$/, '') + '/functions/v1'; // Edge Functions
 
   // ---- 設定（デモ既定値。ライブ時はDBの値で上書き）----
   const config = {
@@ -92,10 +94,10 @@
     const cw = await api.select(`closed_weekday?space_id=eq.${spaceId}&select=weekday`);
     config.closedWeekdays = cw.map((x) => x.weekday);
 
-    // Phase 2-a は決済なし。支払い選択は「予約のみ」に置き換える（虚偽表示を避ける）
-    config.payments = [
-      { id: 'reserve', name: '予約のみ（お支払いは別途ご案内）', provider: '予約', enabled: true, note: 'この段階ではお支払いは発生しません' },
-    ];
+    // 支払い選択：Stripe有効時は「クレジットカード」、無効時は「予約のみ」（虚偽表示を避ける）
+    config.payments = stripeOn
+      ? [{ id: 'stripe', name: 'クレジットカード', provider: 'Stripe', enabled: true, note: 'オンライン事前決済（テストモード）' }]
+      : [{ id: 'reserve', name: '予約のみ（お支払いは別途ご案内）', provider: '予約', enabled: true, note: 'この段階ではお支払いは発生しません' }];
   }
 
   async function loadMonth(y, m) {
@@ -202,8 +204,9 @@
       payWrap.appendChild(b);
     });
 
-    // ライブ（決済なし）では確認画面の注意書きを実態に合わせる
-    if (live) {
+    // ライブ×決済なしのときだけ、確認画面の注意書きを実態に合わせる
+    // （Stripe有効時は既定の「🔒 決済は安全な画面で…」を活かす）
+    if (live && !stripeOn) {
       const sec = root.querySelector('.mgcb-secure');
       if (sec) sec.textContent = 'ご予約内容を送信します（この段階ではお支払いは発生しません）。';
     }
@@ -271,7 +274,7 @@
     if (backBtn) backBtn.style.visibility = step > 1 && step < TOTAL_STEPS ? 'visible' : 'hidden';
     if (nextBtn) {
       nextBtn.style.display = step < TOTAL_STEPS ? '' : 'none';
-      nextBtn.textContent = step === 3 ? (live ? '予約を確定する' : 'お支払いへ進む') : '次へ';
+      nextBtn.textContent = step === 3 ? ((live && !stripeOn) ? '予約を確定する' : 'お支払いへ進む') : '次へ';
     }
     if (step === 3) { clearError(); renderSummary(); }
     syncNext();
@@ -281,6 +284,51 @@
     if (!canAdvance()) return;
 
     if (state.step === 3) {
+      // ── ライブ×Stripe：Checkout セッションを作成して決済ページへ ──
+      if (live && stripeOn && state.paymentId === 'stripe') {
+        clearError();
+        nextBtn.disabled = true;
+        try {
+          const r = await fetch(`${FN}/create-checkout-session`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              apikey: RT.supabaseAnonKey,
+              Authorization: 'Bearer ' + RT.supabaseAnonKey,
+            },
+            body: JSON.stringify({
+              space_slug: spaceSlug,
+              slot_code: config._slotByLabel[state.slot],
+              plan_code: state.planId,
+              date: state.date,
+              people: parseInt(state.people, 10) || 1,
+              name: state.name.trim(),
+              email: state.email.trim(),
+              tel: state.tel.trim(),
+              success_url: RT.stripeSuccessUrl,
+              cancel_url: RT.stripeCancelUrl,
+            }),
+          });
+          const data = await r.json().catch(() => ({}));
+          if (!r.ok || !data.url) {
+            if (data.error === 'slot_taken' || data.error === 'blocked_slot' || data.error === 'closed_day') {
+              showError('申し訳ありません。その日時はちょうどご利用できなくなりました。お手数ですが別の日時をお選びください。');
+              monthCache = {}; await renderCal(); await applyDaySlots();
+            } else {
+              showError('お支払い手続きの開始に失敗しました。通信状況をご確認のうえ、もう一度お試しください。');
+            }
+            nextBtn.disabled = false;
+            return;
+          }
+          // Checkout へ（iframe 内からトップウィンドウを遷移）
+          window.top.location.href = data.url;
+        } catch (e) {
+          showError('通信に失敗しました。時間をおいて再度お試しください。');
+          nextBtn.disabled = false;
+        }
+        return;
+      }
+
       // ── ライブ：Supabaseに予約を作成（決済なし）──
       if (live) {
         clearError();

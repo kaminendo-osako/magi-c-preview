@@ -20,4 +20,16 @@ window.MGCB_CONFIG = {
 
   // 予約対象スペースの slug（schema.sql シードでは 'rental'／所属テナントは 'magic'）
   spaceSlug: 'rental',
+
+  // ── Phase 2-b（Stripe Checkout）────────────────────────────────
+  // false のうちは支払い＝「予約のみ」（決済なし・現行動作）。
+  // Edge Functions のデプロイ＋Supabase Secrets 設定が済んだら true にすると、
+  // 支払いに「クレジットカード（Stripe）」が出て Checkout に接続する。
+  // ※ デプロイ前に true にするとカード決済が失敗するので、必ず後で切り替える。
+  enableStripe: false,
+
+  // 決済後の戻り先（絶対URL）。Edge Function の ALLOWED_RETURN_ORIGINS と
+  // origin を一致させること（一致しないと invalid_return_url で弾かれる）。
+  stripeSuccessUrl: 'https://kaminendo-osako.github.io/magi-c-preview/booking-success.html',
+  stripeCancelUrl:  'https://kaminendo-osako.github.io/magi-c-preview/booking-cancel.html',
 };
