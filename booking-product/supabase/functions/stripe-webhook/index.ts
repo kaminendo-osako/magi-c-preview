@@ -11,6 +11,7 @@
 // =====================================================================
 import Stripe from "https://esm.sh/stripe@16?target=denonext";
 import { dbRpc } from "../_shared/db.ts";
+import { sendBookingConfirmation } from "../_shared/notify.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
   apiVersion: "2024-06-20",
@@ -38,10 +39,19 @@ Deno.serve(async (req) => {
     switch (event.type) {
       case "checkout.session.completed": {
         const s = event.data.object as Stripe.Checkout.Session;
-        await dbRpc("confirm_booking_paid", {
+        const rows = await dbRpc("confirm_booking_paid", {
           p_session_id: s.id,
           p_payment_intent: (s.payment_intent as string) ?? null,
         });
+        const info = Array.isArray(rows) ? rows[0] : rows;
+        // 初回確定（updated=true）のときだけ確定メール（RESEND未設定なら無送信＝非破壊）。
+        // メール失敗は握りつぶして 200 を返す（Stripe の webhook 再送ループを避ける）。
+        if (info && info.updated) {
+          const res = await sendBookingConfirmation(info);
+          if (!res.sent && res.error) {
+            console.error("[stripe-webhook] email failed:", res.error);
+          }
+        }
         break;
       }
       case "checkout.session.expired": {
