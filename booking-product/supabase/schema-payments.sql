@@ -348,6 +348,14 @@ grant execute on function public.booking_public_status(text) to anon, authentica
 grant execute on function public.month_availability(uuid,int,int) to anon, authenticated, service_role;
 grant execute on function public.day_slots(uuid,date)            to anon, authenticated, service_role;
 
+-- Edge Functions（service_role）が space を直接参照するため。
+--   service_role は RLS を回避するが、テーブルGRANTは別途必要。
+--   新API keys 世代のプロジェクトでは master テーブルが service_role に
+--   既定付与されていないことがあるため、ここで明示的に付与する（再販先でも有効）。
+grant usage on schema public to service_role;
+grant select on public.tenant, public.space, public.time_slot, public.plan, public.closed_weekday
+  to service_role;
+
 -- 管理閲覧用ビュー（Supabase Studio の SQL Editor 等で確認する用途）
 --   個人情報を含むため anon には公開しない（RLS/GRANT を付けない）。
 create or replace view public.booking_admin_ja as

@@ -26,10 +26,12 @@ window.MGCB_CONFIG = {
   // Edge Functions のデプロイ＋Supabase Secrets 設定が済んだら true にすると、
   // 支払いに「クレジットカード（Stripe）」が出て Checkout に接続する。
   // ※ デプロイ前に true にするとカード決済が失敗するので、必ず後で切り替える。
-  enableStripe: false,
+  enableStripe: true,
 
   // 決済後の戻り先（絶対URL）。Edge Function の ALLOWED_RETURN_ORIGINS と
   // origin を一致させること（一致しないと invalid_return_url で弾かれる）。
+  // ※ ローカルで通しテストする場合は一時的に http://localhost:5500/... に変えて検証する
+  //   （ALLOWED_RETURN_ORIGINS に localhost も含めてあるため動作する）。
   stripeSuccessUrl: 'https://kaminendo-osako.github.io/magi-c-preview/booking-success.html',
   stripeCancelUrl:  'https://kaminendo-osako.github.io/magi-c-preview/booking-cancel.html',
 };

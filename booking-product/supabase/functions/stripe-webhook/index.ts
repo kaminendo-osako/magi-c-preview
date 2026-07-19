@@ -7,22 +7,16 @@
 //   - checkout.session.expired   → expire_booking()（枠解放）
 //
 //  config.toml で verify_jwt=false（Stripe は Supabase JWT を送らないため）。
-//  STRIPE_WEBHOOK_SECRET / STRIPE_SECRET_KEY / SERVICE_ROLE は Secrets のみ。
+//  DBアクセスは _shared/db.ts（新Secret keyを apikey ヘッダーのみで送る）。
 // =====================================================================
 import Stripe from "https://esm.sh/stripe@16?target=denonext";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { dbRpc } from "../_shared/db.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
   apiVersion: "2024-06-20",
   httpClient: Stripe.createFetchHttpClient(),
 });
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
-
-const supabase = createClient(
-  Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-);
-
 const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET")!;
 
 Deno.serve(async (req) => {
@@ -37,14 +31,14 @@ Deno.serve(async (req) => {
     );
   } catch (e) {
     console.error("[stripe-webhook] signature verify failed:", (e as Error).message);
-    return new Response(`Webhook signature verification failed`, { status: 400 });
+    return new Response("Webhook signature verification failed", { status: 400 });
   }
 
   try {
     switch (event.type) {
       case "checkout.session.completed": {
         const s = event.data.object as Stripe.Checkout.Session;
-        await supabase.rpc("confirm_booking_paid", {
+        await dbRpc("confirm_booking_paid", {
           p_session_id: s.id,
           p_payment_intent: (s.payment_intent as string) ?? null,
         });
@@ -52,7 +46,7 @@ Deno.serve(async (req) => {
       }
       case "checkout.session.expired": {
         const s = event.data.object as Stripe.Checkout.Session;
-        await supabase.rpc("expire_booking", { p_session_id: s.id });
+        await dbRpc("expire_booking", { p_session_id: s.id });
         break;
       }
       default:

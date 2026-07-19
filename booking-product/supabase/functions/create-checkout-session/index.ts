@@ -9,22 +9,17 @@
 //   4) Stripe Checkout Session を作成し、URL をフロントへ返す
 //   5) セッションIDを予約に紐付ける
 //
-//  秘密情報（STRIPE_SECRET_KEY / SERVICE_ROLE）は Supabase Secrets のみ。
-//  フロントには一切出さない。
+//  秘密情報（STRIPE_SECRET_KEY / secret key）は Supabase Secrets のみ。
+//  DBアクセスは _shared/db.ts（新Secret keyを apikey ヘッダーのみで送る）。
 // =====================================================================
 import Stripe from "https://esm.sh/stripe@16?target=denonext";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, json } from "../_shared/cors.ts";
+import { dbSelect, dbRpc } from "../_shared/db.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
   apiVersion: "2024-06-20",
   httpClient: Stripe.createFetchHttpClient(),
 });
-
-const supabase = createClient(
-  Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-);
 
 // カンマ区切りの許可 origin（例: "https://kaminendo-osako.github.io,http://localhost:5500"）
 const ALLOWED_RETURN_ORIGINS = (Deno.env.get("ALLOWED_RETURN_ORIGINS") ?? "")
@@ -62,35 +57,42 @@ Deno.serve(async (req) => {
     }
 
     // space_slug → space_id
-    const { data: space, error: spErr } = await supabase
-      .from("space").select("id")
-      .eq("slug", space_slug ?? "rental").eq("is_active", true).single();
-    if (spErr || !space) return json({ error: "invalid_space" }, 400);
+    const spaces = await dbSelect(
+      `space?slug=eq.${encodeURIComponent(space_slug ?? "rental")}&is_active=eq.true&select=id&limit=1`,
+    );
+    const space = spaces[0];
+    if (!space) return json({ error: "invalid_space" }, 400);
 
     // 仮押さえ作成（検証 + 金額決定は全てDB側）
-    const { data: pend, error: pErr } = await supabase.rpc("create_pending_booking", {
-      p_space_id: space.id,
-      p_slot_code: slot_code,
-      p_plan_code: plan_code,
-      p_date: date,
-      p_people: people,
-      p_name: name,
-      p_email: email,
-      p_tel: tel,
-      p_hold_minutes: HOLD_MINUTES,
-    }).single();
-
-    if (pErr) {
-      const msg = pErr.message ?? "booking_failed";
-      const known = ["slot_taken", "closed_day", "blocked_slot", "past_date"];
-      const status = known.some((k) => msg.includes(k)) ? 409 : 400;
-      // メッセージから既知コードだけ抽出して返す（内部詳細は漏らさない）
+    let pend: { booking_id: string; amount_yen: number } | undefined;
+    try {
+      const rows = await dbRpc("create_pending_booking", {
+        p_space_id: space.id,
+        p_slot_code: slot_code,
+        p_plan_code: plan_code,
+        p_date: date,
+        p_people: people,
+        p_name: name,
+        p_email: email,
+        p_tel: tel,
+        p_hold_minutes: HOLD_MINUTES,
+      });
+      pend = Array.isArray(rows) ? rows[0] : rows;
+    } catch (e) {
+      const msg = (e as Error).message ?? "booking_failed";
+      const known = [
+        "slot_taken", "closed_day", "blocked_slot", "past_date",
+        "invalid_slot", "invalid_plan", "missing_customer_info",
+        "input_too_long", "invalid_email", "invalid_space",
+      ];
       const code = known.find((k) => msg.includes(k)) ?? "booking_failed";
+      const status = (code === "slot_taken" || code === "blocked_slot" || code === "closed_day") ? 409 : 400;
       return json({ error: code }, status);
     }
+    if (!pend) return json({ error: "booking_failed" }, 400);
 
-    const bookingId: string = (pend as { booking_id: string }).booking_id;
-    const amountYen: number = (pend as { amount_yen: number }).amount_yen;
+    const bookingId = pend.booking_id;
+    const amountYen = pend.amount_yen;
 
     // Stripe Checkout Session（★金額はDB由来の amountYen のみ）
     const session = await stripe.checkout.sessions.create({
@@ -111,7 +113,7 @@ Deno.serve(async (req) => {
       metadata: { booking_id: bookingId },
     });
 
-    await supabase.rpc("attach_checkout_session", {
+    await dbRpc("attach_checkout_session", {
       p_booking_id: bookingId,
       p_session_id: session.id,
     });

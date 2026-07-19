@@ -13,3 +13,6 @@ desktop.ini
 # 元素材・作業用フォルダ（公開リポジトリに含めない・念のため）
 素材/
 材料/
+
+# Supabase CLI のローカル状態（プロジェクト参照等。公開不要）
+booking-product/supabase/.temp/
