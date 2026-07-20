@@ -43,14 +43,40 @@ Deno.serve(async (req) => {
           p_session_id: s.id,
           p_payment_intent: (s.payment_intent as string) ?? null,
         });
-        const info = Array.isArray(rows) ? rows[0] : rows;
-        // 初回確定（updated=true）のときだけ確定メール（RESEND未設定なら無送信＝非破壊）。
-        // メール失敗は握りつぶして 200 を返す（Stripe の webhook 再送ループを避ける）。
-        if (info && info.updated) {
-          const res = await sendBookingConfirmation(info);
-          if (!res.sent && res.error) {
-            console.error("[stripe-webhook] email failed:", res.error);
+        const p = Array.isArray(rows) ? rows[0] : rows;
+
+        // 送信可否は「まだ送っていない(confirmation_sent_at IS NULL)」で判定
+        // ＝決済確定の冪等フラグと分離。webhook 再送でも未送なら送る（永久欠落を防止）。
+        if (p && p.booking_id && !p.confirmation_sent_at && !p.tenant_suppressed) {
+          const res = await sendBookingConfirmation({
+            booking_id: p.booking_id,
+            booking_code: p.booking_code,
+            book_date: p.book_date,
+            slot_label: p.slot_label,
+            plan_name: p.plan_name,
+            people: p.people,
+            amount_yen: p.amount_yen,
+            customer_name: p.customer_name,
+            customer_email: p.customer_email,
+            tenant_id: p.tenant_id,
+            from_display_name: p.from_display_name,
+            reply_to_email: p.reply_to_email,
+            owner_notify_email: p.owner_notify_email,
+            sending_mode: p.sending_mode,
+            from_local_part: p.from_local_part,
+            custom_domain: p.custom_domain,
+            customer_suppressed: p.customer_suppressed,
+          });
+
+          if (res.sent) {
+            await dbRpc("mark_confirmation_sent", { p_booking_id: p.booking_id });
+          } else if (res.error && res.error !== "no_sender_domain") {
+            // 実送信エラー: 記録して 500 を返し Stripe に再送させる（冪等キーで二重送信は防止）
+            await dbRpc("record_confirmation_error", { p_booking_id: p.booking_id, p_error: res.error });
+            console.error("[stripe-webhook] email failed, will retry:", res.error);
+            return new Response("email_send_failed_retry", { status: 500 });
           }
+          // res.sent=false かつ error なし/no_sender_domain → RESEND/ドメイン未設定＝非破壊で 200
         }
         break;
       }
