@@ -16,3 +16,6 @@ desktop.ini
 
 # Supabase CLI のローカル状態（プロジェクト参照等。公開不要）
 booking-product/supabase/.temp/
+
+# クライアント内部素材（原価・収益シミュレーター・元資料等。公開リポジトリに含めない）
+parts/

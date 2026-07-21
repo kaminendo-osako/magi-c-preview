@@ -207,8 +207,8 @@ h1, h2, h3 {
     /* 文字の可読性を確保する暗幕（左を濃く／写真の上に重ねる） */
     linear-gradient(100deg, rgba(20,18,14,.66) 0%, rgba(20,18,14,.42) 48%, rgba(20,18,14,.34) 100%),
     linear-gradient(180deg, rgba(20,18,14,.22), rgba(20,18,14,.52)),
-    /* 仮画像：トップHero（最終的に実写真へ差し替え予定） */
-    url("../images/placeholders/home-hero.jpg") center / cover no-repeat,
+    /* 実写真：トップHero（EVENT SPACE Magi-c の店内・青照明） */
+    url("../images/home-hero.jpg") center / cover no-repeat,
     /* 画像が読み込めない場合のフォールバック色 */
     radial-gradient(120% 120% at 70% 20%, #6f7a5f 0%, #4a5240 45%, #2b2c23 100%);
 }
