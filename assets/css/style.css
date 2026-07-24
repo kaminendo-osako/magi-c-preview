@@ -34,7 +34,12 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   font-family: var(--f-sans);
   color: var(--c-ink);
-  background: var(--c-cream);
+  /* 舞台照明のような奥行き：上からの淡いゴールドのグロー＋足元の沈み */
+  background-color: var(--c-cream);
+  background-image:
+    radial-gradient(140% 80% at 50% -10%, rgba(203,167,101,.08), transparent 46%),
+    radial-gradient(120% 90% at 50% 108%, rgba(0,0,0,.45), transparent 55%);
+  background-attachment: fixed;
   line-height: 1.9;
   font-size: 16px;
   letter-spacing: .02em;
@@ -73,12 +78,21 @@ h1, h2, h3 {
 }
 .eyebrow {
   font-family: var(--f-latin);
-  font-size: 1rem;
-  letter-spacing: .28em;
+  font-size: .92rem;
+  letter-spacing: .34em;
   text-transform: uppercase;
   color: var(--c-brass);
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: .85em;
   margin-bottom: 18px;
+}
+/* 見出しラベルを金の細線で挟む（本サイトのサイン＝上質な装丁の要） */
+.eyebrow::before, .eyebrow::after {
+  content: "";
+  width: 2.4em; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--c-brass) 60%, transparent);
+  opacity: .85;
 }
 .section-title {
   font-size: clamp(1.55rem, 3.4vw, 2.5rem);
@@ -212,7 +226,19 @@ h1, h2, h3 {
     /* 画像が読み込めない場合のフォールバック色 */
     radial-gradient(120% 120% at 70% 20%, #6f7a5f 0%, #4a5240 45%, #2b2c23 100%);
 }
-.hero__inner { position: relative; z-index: 2; }
+/* Heroに金の細枠（劇場のプレイビル風の額装）＋見出し背後のほのかなスポット */
+.hero::before {
+  content: "";
+  position: absolute; inset: clamp(14px, 2.4vw, 26px);
+  z-index: 2; pointer-events: none;
+  border: 1px solid rgba(203,167,101,.32);
+}
+.hero::after {
+  content: "";
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(60% 55% at 26% 44%, rgba(203,167,101,.14), transparent 60%);
+}
+.hero__inner { position: relative; z-index: 3; }
 .hero__eyebrow {
   font-family: var(--f-latin);
   letter-spacing: .3em;
